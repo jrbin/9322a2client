@@ -2,12 +2,17 @@ package com.jrbin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -16,6 +21,9 @@ public class OfficerController {
 
     private static final Logger logger = LoggerFactory.getLogger(OfficerController.class);
 
+    @Autowired
+    private RestService restService;
+
     @GetMapping("/login")
     public String officerLogin(Map<String, Object> model) {
         logger.debug("logger test {}", "asd");
@@ -23,12 +31,16 @@ public class OfficerController {
     }
 
     @GetMapping("/license")
-    public String officerLicense(Map<String, Object> model) {
+    public String officerLicense(Model model) throws IOException {
+        List<License> licenses = restService.getLicenses(true).execute().body();
+        model.addAttribute("licenses", licenses);
         return "officer/license.jsp";
     }
 
     @GetMapping("/renewal")
-    public String officerRenewal(Map<String, Object> model) {
+    public String officerRenewal(Model model) throws IOException {
+        List<Renewal> renewals = restService.getRenewals().execute().body();
+        model.addAttribute("renewals", renewals);
         return "officer/renewal.jsp";
     }
 

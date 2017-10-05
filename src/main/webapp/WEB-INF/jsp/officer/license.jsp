@@ -1,5 +1,6 @@
 <%@page contentType="text/html;charset=UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <t:officer>
   <div class="container">
@@ -10,7 +11,8 @@
         <button class="ml-1 btn btn-sm btn-outline-secondary client-btn client-license-select" type="button">Select All</button>
         <button class="ml-1 btn btn-sm btn-outline-secondary client-btn client-license-deselect" type="button">Deselect All</button>
       </div>
-      <table class="table">
+      ${asd}
+      <table class="table" ${not empty licenses ? '' : 'hidden'}>
         <thead>
           <tr>
             <th>#</th>
@@ -22,6 +24,17 @@
           </tr>
         </thead>
         <tbody>
+          <c:forEach var="license" items="${licenses}">
+            <tr>
+              <td><input class="client-license-checkbox" type="checkbox" name="licenseId" value="${license.id}"></td>
+              <td>${license.licenseNumber}</td>
+              <td>${license.licenseClass}</td>
+              <td>${license.driverName}</td>
+              <td>${license.email}</td>
+              <td><time datetime="2017-10-10">10/10/2017</time></td>
+            </tr>
+          </c:forEach>
+          <!--
           <tr>
             <td><input class="client-license-checkbox" type="checkbox" name="licenseId" value="1"></td>
             <td>123123123Q</td>
@@ -46,9 +59,10 @@
             <td>youremail@email.com</td>
             <td><time datetime="2017-10-31">31/10/2017</time></td>
           </tr>
+          -->
         </tbody>
       </table>
     </form>
-    <%--<div class="blank-slate">No licenses are expiring.</div>--%>
+    <div class="blank-slate" ${not empty licenses ? 'hidden' : ''}>No licenses are expiring.</div>
   </div>
 </t:officer>

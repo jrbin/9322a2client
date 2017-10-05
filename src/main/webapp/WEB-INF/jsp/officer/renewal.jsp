@@ -1,5 +1,6 @@
 <%@page contentType="text/html;charset=UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <t:officer>
   <div class="container">
@@ -29,6 +30,46 @@
         </tr>
       </thead>
       <tbody>
+        <c:forEach var="renewal" items="${renewals}">
+          <c:choose>
+            <c:when test="${renewal.status == 0}">
+              <c:set var="badgeClass" value="badge-light" />
+              <c:set var="statusText" value="new" />
+            </c:when>
+            <c:when test="${renewal.status == 1}">
+              <c:set var="badgeClass" value="badge-warning" />
+              <c:set var="statusText" value="waiting review" />
+            </c:when>
+            <c:when test="${renewal.status == 2}">
+              <c:set var="badgeClass" value="badge-info" />
+              <c:set var="statusText" value="under review" />
+            </c:when>
+            <c:when test="${renewal.status == 3}">
+              <c:set var="badgeClass" value="badge-primary" />
+              <c:set var="statusText" value="waiting payment" />
+            </c:when>
+            <c:when test="${renewal.status == 4}">
+              <c:set var="badgeClass" value="badge-success" />
+              <c:set var="statusText" value="successful" />
+            </c:when>
+            <c:when test="${renewal.status == 5}">
+              <c:set var="badgeClass" value="badge-danger" />
+              <c:set var="statusText" value="rejected" />
+            </c:when>
+            <c:when test="${renewal.status == 6}">
+              <c:set var="badgeClass" value="badge-dark" />
+              <c:set var="statusText" value="archived" />
+            </c:when>
+          </c:choose>
+          <tr>
+            <td>${renewal.id}</td>
+            <td><span class="badge ${badgeClass}" data-value="${renewal.status}">${statusText}</span></td>
+            <td><time datetime="2017-10-4">4/10/2017</time></td>
+            <td></td>
+            <td></td>
+            <td><a href="${officerUrl}renewal/detail?id=${renewal.id}">View details</a></td>
+          </tr>
+        </c:forEach>
         <tr>
           <td>1</td>
           <td><span class="badge badge-light" data-value="0">new</span></td>
