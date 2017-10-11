@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://assignment1.comp9322/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="http://assignment1.comp9322" name="EmployeeValidationServiceImplService" targetNamespace="http://assignment1.comp9322/">
+  <wsdl:import location="http://aciwc.com:8080/assignment1/EmployeeValidation?wsdl=EmployeeValidationService.wsdl" namespace="http://assignment1.comp9322">
+    </wsdl:import>
+  <wsdl:binding name="EmployeeValidationServiceImplServiceSoapBinding" type="ns1:EmployeeValidationService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="ReturnPostcode">
+      <soap:operation soapAction="http://assignment1.comp9322/ReturnPostcode" style="document"/>
+      <wsdl:input name="ReturnPostcode">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ReturnPostcodeResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ValidationFaultMsg">
+        <soap:fault name="ValidationFaultMsg" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="CheckAddress">
+      <soap:operation soapAction="http://assignment1.comp9322/CheckAddress" style="document"/>
+      <wsdl:input name="CheckAddress">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="CheckAddressResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ValidationFaultMsg">
+        <soap:fault name="ValidationFaultMsg" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="CheckEmailAddress">
+      <soap:operation soapAction="http://assignment1.comp9322/CheckEmailAddress" style="document"/>
+      <wsdl:input name="CheckEmailAddress">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="CheckEmailAddressResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="EmployeeValidationServiceImplService">
+    <wsdl:port binding="tns:EmployeeValidationServiceImplServiceSoapBinding" name="EmployeeValidationServiceImplPort">
+      <soap:address location="http://aciwc.com:8080/assignment1/EmployeeValidation"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

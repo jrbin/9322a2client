@@ -2,23 +2,27 @@ package com.jrbin;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Renewal {
-
     private int id;
     private String uri;
     private String email;
     private String address;
     private int status;
+    private int reviewCode;
+    private String rejectReason;
     @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss")
     private Date issueDate;
     @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss")
     private Date lastModified;
     private License license;
+    @JsonManagedReference
+    private Payment payment;
 
     public int getId() {
         return id;
@@ -60,6 +64,22 @@ public class Renewal {
         this.status = status;
     }
 
+    public int getReviewCode() {
+        return reviewCode;
+    }
+
+    public void setReviewCode(int reviewCode) {
+        this.reviewCode = reviewCode;
+    }
+
+    public String getRejectReason() {
+        return rejectReason;
+    }
+
+    public void setRejectReason(String rejectReason) {
+        this.rejectReason = rejectReason;
+    }
+
     public Date getIssueDate() {
         return issueDate;
     }
@@ -82,5 +102,13 @@ public class Renewal {
 
     public void setLicense(License license) {
         this.license = license;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
     }
 }
