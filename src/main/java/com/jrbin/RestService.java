@@ -29,5 +29,5 @@ public interface RestService {
     Call<Payment> getPayment(@Path("paymentId") int paymentId);
 
     @PUT("payments/{paymentId}")
-    Call<Payment> updatePayment(@Path("paymentId") int paymentId);
+    Call<Payment> updatePayment(@Path("paymentId") int paymentId, @Body Payment payment);
 }

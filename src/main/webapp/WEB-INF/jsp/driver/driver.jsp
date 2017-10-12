@@ -49,6 +49,9 @@
             <span class="mr-auto">6. Under review</span>
             <span class="oi oi-check client-check" ${renewal.status <= Status.REVIEWING ? 'hidden' : ''}></span>
           </a>
+          <a class="list-group-item d-flex align-items-center client-active" href="#rejected" ${renewal.status == Status.REJECTED ? '' : 'hidden'}>
+            <span class="mr-auto">Rejected</span>
+          </a>
           <a class="list-group-item d-flex align-items-center ${renewal.status < Status.APPROVED ? 'disabled' : ''} ${renewal.status == Status.APPROVED ? 'client-active' : ''}" href="#make-payment">
             <span class="mr-auto">7. Make payment</span>
             <span class="oi oi-check client-check" ${renewal.status <= Status.APPROVED ? 'hidden' : ''}></span>
@@ -144,8 +147,9 @@
         <c:if test="${renewal.status == Status.CONFIRMED}">
           <form method="post" action="${driverUrl}extension">
             <input name="renewalId" value="${renewal.id}" hidden>
-            <button type="submit" class="btn btn-primary" name="action" value="1">Request extra extension</button>
-            <button type="submit" class="btn btn-secondary" name="action" value="0">No, thanks</button>
+            <button type="submit" class="btn btn-primary" name="action" value="0">No, thanks</button>
+            <button type="submit" class="btn btn-info" name="action" value="1">Request extra extension</button>
+            <button type="submit" class="btn btn-secondary" name="action" value="2">Go back</button>
           </form>
         </c:if>
       </div>
@@ -154,15 +158,23 @@
         <p>You need to wait about 5 working days before your case is reviewed manually.</p>
         <p>You can close the page now and go back to check the progress any time.</p>
         <p>If you have waited for more than 5 working days, please call 132307 and we will solve it for you.</p>
+        <c:if test="${renewal.status == Status.PENDING}">
+          <form method="post" action="${driverUrl}back">
+            <input name="renewalId" value="${renewal.id}" hidden>
+            <button type="submit" class="btn btn-secondary">I want to go back to edit again</button>
+          </form>
+        </c:if>
       </div>
       <div id="under-review" class="driver-task" ${renewal.status==Status.REVIEWING ? '' : 'hidden'}>
         <h2 class="client-driver-heading">Under Review</h2>
         <p>An officer is reviewing your case now.</p>
         <p>Be patient, it usually takes 2 working days and then we will proceed you to pay the processing fee.</p>
         <p>Please call 132307 if you have any questions.</p>
+      </div>
+      <div id="rejected" class="driver-task" ${renewal.status==Status.REJECTED ? '' : 'hidden'}>
         <h2 class="client-driver-heading">Request Rejected</h2>
         <p>Unfortunately your case is rejected based on the following reason.</p>
-        <textarea class="form-control mb-3" rows="4" readonly>You address can not be found in the address database.</textarea>
+        <textarea class="form-control mb-3" rows="4" readonly>${renewal.reason}</textarea>
         <p>Please call 132307 to make an enquiry.</p>
       </div>
       <div id="make-payment" class="driver-task" ${renewal.status==Status.APPROVED ? '' : 'hidden'}>

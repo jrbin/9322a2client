@@ -2,7 +2,7 @@
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<t:officer>
+<t:officer officer="${officer}">
   <div class="container">
     <h2 class="client-heading">Expiring Licenses</h2>
     <form method="post" action="">
@@ -31,7 +31,7 @@
               <td>${license.licenseClass}</td>
               <td>${license.driverName}</td>
               <td>${license.email}</td>
-              <td><time datetime="2017-10-10">10/10/2017</time></td>
+              <td><time datetime="2017-10-10">${license.expiryDate}</time></td>
             </tr>
           </c:forEach>
           <!--

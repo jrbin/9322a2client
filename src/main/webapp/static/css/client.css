@@ -7,6 +7,12 @@
     margin: 2rem 0;
 }
 
+.client-subheading {
+    font-weight: 300;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
 .client-btn {
     font-weight: 300;
 }
@@ -93,4 +99,12 @@
     padding: 0.5rem 1rem;
     box-shadow: 0 0 5px #aaa;
     margin-bottom: 1.25rem;
+}
+
+.client-detail-tab {
+    margin-bottom: 3rem;
+}
+
+td.client-td-action {
+    padding: 0.4rem;
 }

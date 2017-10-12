@@ -3,7 +3,6 @@ package com.jrbin;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
 
@@ -15,7 +14,7 @@ public class Renewal {
     private String address;
     private int status;
     private int reviewCode;
-    private String rejectReason;
+    private String reason;
     @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss")
     private Date issueDate;
     @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss")
@@ -72,12 +71,12 @@ public class Renewal {
         this.reviewCode = reviewCode;
     }
 
-    public String getRejectReason() {
-        return rejectReason;
+    public String getReason() {
+        return reason;
     }
 
-    public void setRejectReason(String rejectReason) {
-        this.rejectReason = rejectReason;
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 
     public Date getIssueDate() {

@@ -81,6 +81,11 @@
       <artifactId>tomcat-embed-jasper</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
     <!-- Test -->
     <dependency>
       <groupId>junit</groupId>
@@ -114,7 +119,7 @@
               <wsdlOptions>
                 <wsdlOption>
                   <wsdl>
-                    ${basedir}/src/main/resources/EmployeeValidation.wsdl
+                    http://aciwc.com:8888/assignment1/EmployeeValidation?wsdl
                   </wsdl>
                 </wsdlOption>
               </wsdlOptions>
