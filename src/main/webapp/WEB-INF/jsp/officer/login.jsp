@@ -21,14 +21,14 @@
           <p class="lead text-center"><small>Officer Login</small></p>
           <div class="card">
             <div class="card-body">
-              <form method="post" action="${officerUrl}license">
+              <form method="post" action="${officerUrl}login">
                 <div class="form-group">
                   <label for="input-username" class="client-label">Username</label>
-                  <input id="input-username" class="form-control" type="text" name="username">
+                  <input id="input-username" class="form-control" type="text" name="username" required>
                 </div>
                 <div class="form-group">
                   <label for="input-password" class="client-label">Password</label>
-                  <input id="input-password" class="form-control" type="password" name="password">
+                  <input id="input-password" class="form-control" type="password" name="password" required>
                 </div>
                 <button class="btn btn-block btn-success mt-4" type="submit">Login</button>
               </form>

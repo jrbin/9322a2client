@@ -7,6 +7,12 @@
     margin: 2rem 0;
 }
 
+.client-subheading {
+    font-weight: 300;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
 .client-btn {
     font-weight: 300;
 }
@@ -78,10 +84,27 @@
 .client-driver-right {
     flex-grow: 1;
     margin-left: 50px;
+    margin-bottom: 2rem;
 }
 
 .client-driver-heading {
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
     border-bottom: 1px #e1e4e8 solid;
+}
+
+.client-address-group {
+    border: 1px #f3f3f3 solid;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 0 5px #aaa;
+    margin-bottom: 1.25rem;
+}
+
+.client-detail-tab {
+    margin-bottom: 3rem;
+}
+
+td.client-td-action {
+    padding: 0.4rem;
 }
