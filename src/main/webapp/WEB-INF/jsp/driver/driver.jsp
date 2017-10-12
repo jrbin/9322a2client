@@ -213,7 +213,7 @@
           The amount of the processing fee might vary if you have had a manual review.
         </div>
         <p>The amount to be paid:</p>
-        <p class="display-4">$50</p>
+        <p class="display-4">$${renewal.payment.amount}</p>
         <c:if test="${renewal.status == Status.APPROVED}">
           <form method="post" action="${driverUrl}pay">
             <input name="renewalId" value="${renewal.id}" hidden>

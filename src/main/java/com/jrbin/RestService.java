@@ -19,6 +19,9 @@ public interface RestService {
     @GET("renewals/{renewalId}")
     Call<Renewal> getRenewal(@Path("renewalId") int renewalId);
 
+    @PUT("licenses/{licenseId}")
+    Call<License> updateLicense(@Path("licenseId") int licenseId, @Body License license);
+
     @POST("renewals")
     Call<Renewal> createRenewal(@Body Renewal renewal);
 

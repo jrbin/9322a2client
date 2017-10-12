@@ -38,12 +38,9 @@ public class DriverController {
         renewal.setLicense(license);
         renewal.setPayment(payment);
         model.addAttribute("renewal", renewal);
-        Calendar c = Calendar.getInstance();
-        c.setTime(license.getExpiryDate());
+        model.addAttribute("expiryNew", getExpiryNew(license.getExpiryDate()));
         c.add(Calendar.YEAR, 5);
-        model.addAttribute("expiryNew", c.getTime());
-        c.add(Calendar.YEAR, 5);
-        model.addAttribute("expiryExtended", c.getTime());
+        model.addAttribute("expiryExtended", getExpiryExtended(license.getExpiryDate()));
         return "driver/driver.jsp";
     }
 
@@ -156,6 +153,17 @@ public class DriverController {
     @PostMapping("/pay")
     public String driverPay(@RequestParam int renewalId) throws IOException {
         Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
+        License license = renewal.getLicense();
+        Date expiryDate = null;
+        if (renewal.getReviewCode() == ReviewCode.EXTRA_EXTENSION) {
+            expiryDate = getExpiryExtended(license.getExpiryDate());
+        } else {
+            expiryDate = getExpiryNew(license.getExpiryDate());
+        }
+        license.setExpiryDate(expiryDate);
+        license.setEmail(renewal.getEmail());
+        license.setAddress(renewal.getAddress());
+        driverRestService.updateLicense(license.getId(), license).execute();
         renewal.setStatus(Status.SUCCESSFUL);
         driverRestService.updateRenewal(renewalId, renewal).execute();
         return String.format("redirect:/driver/process?renewalId=%d", renewalId);
@@ -167,5 +175,19 @@ public class DriverController {
         renewal.setStatus(Status.ARCHIVED);
         driverRestService.updateRenewal(renewalId, renewal).execute();
         return String.format("redirect:/driver/process?renewalId=%d", renewalId);
+    }
+
+    private Date getExpiryNew(Date expiryOld) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(expiryOld);
+        c.add(Calendar.YEAR, 5);
+        return c.getTime();
+    }
+
+    private Date getExpiryExtended(Date expiryOld) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(expiryOld);
+        c.add(Calendar.YEAR, 10);
+        return c.getTime();
     }
 }
