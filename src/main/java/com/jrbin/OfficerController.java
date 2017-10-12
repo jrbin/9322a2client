@@ -148,7 +148,7 @@ public class OfficerController {
     private Officer getOfficerFromSession() {
         if (httpSession.getAttribute("officerId") == null) {
             logger.debug("Unauthorized access");
-            throw new UnauthorizedException();
+            throw new UnauthorizedException("You need to login as an officer first");
         }
         int officerId = (int) httpSession.getAttribute("officerId");
         logger.debug("officerId {}", officerId);
@@ -166,7 +166,7 @@ public class OfficerController {
         logger.debug(sBuilder.toString());
         if (!rowSet.first()) {
             logger.debug("Officer not found");
-            throw new NotFoundException();
+            throw new NotFoundException(String.format("Officer %d not found", officerId));
         }
         Officer officer = new Officer();
         officer.setId(rowSet.getInt("id"));

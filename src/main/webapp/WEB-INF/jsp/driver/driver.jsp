@@ -50,7 +50,7 @@
             <span class="mr-auto">6. Under review</span>
             <span class="oi oi-check client-check" ${renewal.status <= Status.REVIEWING ? 'hidden' : ''}></span>
           </a>
-          <a class="list-group-item d-flex align-items-center client-active" href="#rejected" ${renewal.status == Status.REJECTED ? '' : 'hidden'}>
+          <a class="list-group-item ${renewal.status == Status.REJECTED ? 'd-flex' : 'd-none'} align-items-center client-active" href="#rejected">
             <span class="mr-auto">Rejected</span>
           </a>
           <a class="list-group-item d-flex align-items-center ${renewal.status < Status.APPROVED ? 'disabled' : ''} ${renewal.status == Status.APPROVED ? 'client-active' : ''}" href="#make-payment">

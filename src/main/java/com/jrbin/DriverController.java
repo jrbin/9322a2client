@@ -33,13 +33,15 @@ public class DriverController {
     @GetMapping("/process")
     public String driverMain(@RequestParam int renewalId, Model model) throws IOException {
         Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
+        if (renewal == null || renewal.getStatus() == Status.ARCHIVED) {
+            throw new NotFoundException(String.format("Renewal notice %d not found", renewalId));
+        }
         License license = driverRestService.getLicense(renewal.getLicense().getId()).execute().body();
         Payment payment = driverRestService.getPayment(renewal.getPayment().getId()).execute().body();
         renewal.setLicense(license);
         renewal.setPayment(payment);
         model.addAttribute("renewal", renewal);
         model.addAttribute("expiryNew", getExpiryNew(license.getExpiryDate()));
-        c.add(Calendar.YEAR, 5);
         model.addAttribute("expiryExtended", getExpiryExtended(license.getExpiryDate()));
         return "driver/driver.jsp";
     }
@@ -96,7 +98,7 @@ public class DriverController {
             boolean emailValid = emailResponse.isValue();
 
             boolean addressValid = false;
-            String newAddress = String.format("%s %s %s %s %s", preStreet, streetName, streetType, suburb, state);
+            String newAddress = String.format("%s %s %s, %s, %s", preStreet, streetName, streetType, suburb, state);
             try {
                 CheckAddressResponse addressResponse = soapService.checkAddress(addressRequest);
                 ReturnPostcodeResponse postcodeResponse = soapService.returnPostcode(postcodeRequest);
@@ -114,7 +116,7 @@ public class DriverController {
             } else if (!emailValid && !addressValid) {
                 renewal.setStatus(Status.PENDING);
                 renewal.setReviewCode(ReviewCode.INVALID_BOTH);
-            } else if (!emailValid) {
+            } else if (!emailValid && addressValid) {
                 renewal.setStatus(Status.PENDING);
                 renewal.setReviewCode(ReviewCode.INVALID_EMAIL);
             } else {
@@ -153,6 +155,9 @@ public class DriverController {
     @PostMapping("/pay")
     public String driverPay(@RequestParam int renewalId) throws IOException {
         Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
+        Payment payment = renewal.getPayment();
+        payment.setPaidDate(new Date());
+        driverRestService.updatePayment(payment.getId(), payment).execute();
         License license = renewal.getLicense();
         Date expiryDate = null;
         if (renewal.getReviewCode() == ReviewCode.EXTRA_EXTENSION) {
