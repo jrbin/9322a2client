@@ -119,7 +119,7 @@
               <wsdlOptions>
                 <wsdlOption>
                   <wsdl>
-                    http://aciwc.com:8888/assignment1/EmployeeValidation?wsdl
+                    ${basedir}/src/main/resources/EmployeeValidation.wsdl
                   </wsdl>
                 </wsdlOption>
               </wsdlOptions>

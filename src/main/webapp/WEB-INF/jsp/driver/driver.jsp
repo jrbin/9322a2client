@@ -1,6 +1,7 @@
 <%@page contentType="text/html;charset=UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page import="com.jrbin.Status,com.jrbin.ReviewCode" %>
 
 <t:base>
@@ -139,8 +140,8 @@
       </div>
       <div id="extra-extension" class="driver-task" ${renewal.status==Status.CONFIRMED ? '' : 'hidden'}>
         <h2 class="client-driver-heading">Extra Extension</h2>
-        <p>Now your expiry date will be extend to <strong><time datetime="2022-10-10">10/10/2022</time></strong> once you complete the renewal process.</p>
-        <p>You can also request an extra extension which will extend your expiry date to <strong><time datetime="2027-10-10">10/10/2027</time></strong></p>
+        <p>Now your expiry date will be extend to <strong><time><fmt:formatDate type="date" value="${expiryNew}" /></time></strong> once you complete the renewal process.</p>
+        <p>You can also request an extra extension which will extend your expiry date to <strong><time><fmt:formatDate type="date" value="${expiryExtended}" /></time></strong></p>
         <div class="alert alert-warning" role="alert">
           An extra extension needs manual review. It usually takes 7 working days to complete.
         </div>
@@ -155,6 +156,33 @@
       </div>
       <div id="waiting-review" class="driver-task" ${renewal.status==Status.PENDING ? '' : 'hidden'}>
         <h2 class="client-driver-heading">Waiting Review</h2>
+        <c:choose>
+          <c:when test="${renewal.reviewCode == ReviewCode.EXTRA_EXTENSION}">
+            <div class="alert alert-primary" role="alert">
+              Manual review is necessary because you have requested an extra extension.
+            </div>
+          </c:when>
+          <c:when test="${renewal.reviewCode == ReviewCode.INVALID_EMAIL}">
+            <div class="alert alert-warning" role="alert">
+              Manual review is necessary because the new email provided is invalid.
+            </div>
+          </c:when>
+          <c:when test="${renewal.reviewCode == ReviewCode.INVALID_ADDRESS}">
+            <div class="alert alert-warning" role="alert">
+              Manual review is necessary because the new address provided is invalid.
+            </div>
+          </c:when>
+          <c:when test="${renewal.reviewCode == ReviewCode.INVALID_BOTH}">
+            <div class="alert alert-warning" role="alert">
+              Manual review is necessary because both of the new email and the new address are invalid.
+            </div>
+          </c:when>
+          <c:otherwise>
+            <div class="alert alert-info" role="alert">
+              This case does not need to be reviewed yet.
+            </div>
+          </c:otherwise>
+        </c:choose>
         <p>You need to wait about 5 working days before your case is reviewed manually.</p>
         <p>You can close the page now and go back to check the progress any time.</p>
         <p>If you have waited for more than 5 working days, please call 132307 and we will solve it for you.</p>
@@ -174,7 +202,7 @@
       <div id="rejected" class="driver-task" ${renewal.status==Status.REJECTED ? '' : 'hidden'}>
         <h2 class="client-driver-heading">Request Rejected</h2>
         <p>Unfortunately your case is rejected based on the following reason.</p>
-        <textarea class="form-control mb-3" rows="4" readonly>${renewal.reason}</textarea>
+        <textarea class="form-control mb-3 is-invalid" rows="4" readonly>${renewal.reason}</textarea>
         <p>Please call 132307 to make an enquiry.</p>
       </div>
       <div id="make-payment" class="driver-task" ${renewal.status==Status.APPROVED ? '' : 'hidden'}>

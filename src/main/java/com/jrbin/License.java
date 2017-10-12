@@ -15,7 +15,7 @@ public class License {
     private String driverName;
     private String email;
     private String address;
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date expiryDate;
 
     public int getId() {

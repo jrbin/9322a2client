@@ -15,9 +15,9 @@ public class Renewal {
     private int status;
     private int reviewCode;
     private String reason;
-    @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss")
+    @JsonFormat(pattern = "dd/MM/yyyy hh:mm:ss")
     private Date issueDate;
-    @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss")
+    @JsonFormat(pattern = "dd/MM/yyyy hh:mm:ss")
     private Date lastModified;
     private License license;
     @JsonManagedReference

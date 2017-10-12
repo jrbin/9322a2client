@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import retrofit2.http.POST;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.Calendar;
+import java.util.Date;
 
 @Controller
 @RequestMapping("/driver")
@@ -22,7 +22,7 @@ public class DriverController {
     private static final Logger logger = LoggerFactory.getLogger(DriverController.class);
 
     @Autowired
-    private RestService restService;
+    private RestService driverRestService;
 
     @Autowired
     private EmployeeValidationService soapService;
@@ -32,36 +32,42 @@ public class DriverController {
 
     @GetMapping("/process")
     public String driverMain(@RequestParam int renewalId, Model model) throws IOException {
-        Renewal renewal = restService.getRenewal(renewalId).execute().body();
-        License license = restService.getLicense(renewal.getLicense().getId()).execute().body();
-        Payment payment = restService.getPayment(renewal.getPayment().getId()).execute().body();
+        Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
+        License license = driverRestService.getLicense(renewal.getLicense().getId()).execute().body();
+        Payment payment = driverRestService.getPayment(renewal.getPayment().getId()).execute().body();
         renewal.setLicense(license);
         renewal.setPayment(payment);
         model.addAttribute("renewal", renewal);
+        Calendar c = Calendar.getInstance();
+        c.setTime(license.getExpiryDate());
+        c.add(Calendar.YEAR, 5);
+        model.addAttribute("expiryNew", c.getTime());
+        c.add(Calendar.YEAR, 5);
+        model.addAttribute("expiryExtended", c.getTime());
         return "driver/driver.jsp";
     }
 
     @PostMapping("/welcome")
     public String driverWelcome(@RequestParam int renewalId) throws IOException {
-        Renewal renewal = restService.getRenewal(renewalId).execute().body();
+        Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
         renewal.setStatus(Status.CONFIRMING);
-        restService.updateRenewal(renewalId, renewal).execute();
+        driverRestService.updateRenewal(renewalId, renewal).execute();
         return String.format("redirect:/driver/process?renewalId=%d", renewalId);
     }
 
     @PostMapping("/confirm")
     public String driverConfirm(@RequestParam int renewalId, @RequestParam int action) throws IOException {
-        Renewal renewal = restService.getRenewal(renewalId).execute().body();
+        Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
         if (action == 0) {
             renewal.setStatus(Status.UPDATING);
         } else {
             renewal.setStatus(Status.CONFIRMED);
-            License license = restService.getLicense(renewal.getLicense().getId()).execute().body();
+            License license = driverRestService.getLicense(renewal.getLicense().getId()).execute().body();
             renewal.setEmail(license.getEmail());
             renewal.setAddress(license.getAddress());
             renewal.setReviewCode(ReviewCode.DEFAULT);
         }
-        restService.updateRenewal(renewalId, renewal).execute();
+        driverRestService.updateRenewal(renewalId, renewal).execute();
         return String.format("redirect:/driver/process?renewalId=%d", renewalId);
     }
 
@@ -70,7 +76,7 @@ public class DriverController {
             @RequestParam int renewalId, @RequestParam int action,
             @RequestParam String email, @RequestParam String preStreet, @RequestParam String streetName,
             @RequestParam String streetType, @RequestParam String suburb, @RequestParam String state) throws IOException {
-        Renewal renewal = restService.getRenewal(renewalId).execute().body();
+        Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
         if (action == 0) {
             renewal.setStatus(Status.CONFIRMING);
         } else {
@@ -119,13 +125,13 @@ public class DriverController {
                 renewal.setReviewCode(ReviewCode.INVALID_ADDRESS);
             }
         }
-        restService.updateRenewal(renewalId, renewal).execute();
+        driverRestService.updateRenewal(renewalId, renewal).execute();
         return String.format("redirect:/driver/process?renewalId=%d", renewalId);
     }
 
     @PostMapping("/extension")
     public String driverExtension(@RequestParam int renewalId, @RequestParam int action) throws IOException {
-        Renewal renewal = restService.getRenewal(renewalId).execute().body();
+        Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
         if (action == 0) {
             renewal.setStatus(Status.APPROVED);
             renewal.setReviewCode(ReviewCode.DEFAULT);
@@ -135,31 +141,31 @@ public class DriverController {
         } else if (action == 2) {
             renewal.setStatus(Status.CONFIRMING);
         }
-        restService.updateRenewal(renewalId, renewal).execute();
+        driverRestService.updateRenewal(renewalId, renewal).execute();
         return String.format("redirect:/driver/process?renewalId=%d", renewalId);
     }
 
     @PostMapping("/back")
     public String driverExtension(@RequestParam int renewalId) throws IOException {
-        Renewal renewal = restService.getRenewal(renewalId).execute().body();
+        Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
         renewal.setStatus(Status.CONFIRMING);
-        restService.updateRenewal(renewalId, renewal).execute();
+        driverRestService.updateRenewal(renewalId, renewal).execute();
         return String.format("redirect:/driver/process?renewalId=%d", renewalId);
     }
 
     @PostMapping("/pay")
     public String driverPay(@RequestParam int renewalId) throws IOException {
-        Renewal renewal = restService.getRenewal(renewalId).execute().body();
+        Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
         renewal.setStatus(Status.SUCCESSFUL);
-        restService.updateRenewal(renewalId, renewal).execute();
+        driverRestService.updateRenewal(renewalId, renewal).execute();
         return String.format("redirect:/driver/process?renewalId=%d", renewalId);
     }
 
     @PostMapping("/archive")
     public String driverArchive(@RequestParam int renewalId) throws IOException {
-        Renewal renewal = restService.getRenewal(renewalId).execute().body();
+        Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
         renewal.setStatus(Status.ARCHIVED);
-        restService.updateRenewal(renewalId, renewal).execute();
+        driverRestService.updateRenewal(renewalId, renewal).execute();
         return String.format("redirect:/driver/process?renewalId=%d", renewalId);
     }
 }

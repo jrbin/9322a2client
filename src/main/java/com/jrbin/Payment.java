@@ -12,7 +12,7 @@ public class Payment {
     private int id;
     private String uri;
     private BigDecimal amount;
-    @JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss")
+    @JsonFormat(pattern = "dd/MM/yyyy hh:mm:ss")
     private Date paidDate;
     @JsonBackReference
     private Renewal renewal;

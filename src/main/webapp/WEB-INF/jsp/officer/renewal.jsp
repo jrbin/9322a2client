@@ -1,6 +1,7 @@
 <%@page contentType="text/html;charset=UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page import="com.jrbin.Status,com.jrbin.ReviewCode" %>
 
 <t:officer officer="${officer}">
@@ -37,7 +38,7 @@
             <tr>
               <td>${renewal.id}</td>
               <td><span class="badge ${badgeClass}" data-value="${statusCode}">${statusText}</span></td>
-              <td><time datetime="2017-10-4">${renewal.issueDate}</time></td>
+              <td><time><fmt:formatDate type="date" value="${renewal.issueDate}" /></time></td>
               <td>${renewal.license.licenseNumber}</td>
               <td>${renewal.license.licenseClass}</td>
               <td class="client-td-action">
@@ -54,6 +55,6 @@
         </tbody>
       </table>
     </c:if>
-    <div class="blank-slate" ${not empty renewals ? 'hidden' : ''}>No licenses are expiring.</div>
+    <div class="blank-slate" ${not empty renewals ? 'hidden' : ''}>No renewals here.</div>
   </div>
 </t:officer>

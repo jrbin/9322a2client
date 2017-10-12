@@ -1,6 +1,7 @@
 <%@page contentType="text/html;charset=UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <t:officer officer="${officer}">
   <div class="container">
@@ -31,7 +32,7 @@
               <td>${license.licenseClass}</td>
               <td>${license.driverName}</td>
               <td>${license.email}</td>
-              <td><time datetime="2017-10-10">${license.expiryDate}</time></td>
+              <td><time><fmt:formatDate type="date" value="${license.expiryDate}" /></time></td>
             </tr>
           </c:forEach>
           <!--

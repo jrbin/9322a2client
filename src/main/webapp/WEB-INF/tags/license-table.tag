@@ -1,4 +1,5 @@
 <%@tag description="Base HTML Tag" pageEncoding="UTF-8"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@attribute name="id" required="false" %>
 <%@attribute type="com.jrbin.License" name="license" required="true" %>
 <div id="${not empty id ? id : 'license-table'}" class="mb-4">
@@ -24,6 +25,6 @@
   </div>
   <div class="client-detail-row">
     <div class="client-detail-label">Expiry date</div>
-    <div class="client-detail-value"><time datetime="2017-10-10">${license.expiryDate}</time></div>
+    <div class="client-detail-value"><time><fmt:formatDate type="date" value="${license.expiryDate}" /></time></div>
   </div>
 </div>

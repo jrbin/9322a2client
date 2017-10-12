@@ -31,7 +31,7 @@ public class OfficerController {
     private String contextPath;
 
     @Autowired
-    private RestService restService;
+    private RestService officerRestService;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -48,7 +48,7 @@ public class OfficerController {
     @GetMapping("/license")
     public String officerLicense(Model model) throws IOException {
         model.addAttribute("officer", getOfficerFromSession());
-        List<License> licenses = restService.getLicenses(true).execute().body();
+        List<License> licenses = officerRestService.getLicenses(true).execute().body();
         model.addAttribute("licenses", licenses);
         return "officer/license.jsp";
     }
@@ -56,7 +56,7 @@ public class OfficerController {
     @GetMapping("/renewal")
     public String officerRenewal(Model model) throws IOException {
         model.addAttribute("officer", getOfficerFromSession());
-        List<Renewal> renewals = restService.getRenewals().execute().body();
+        List<Renewal> renewals = officerRestService.getRenewals().execute().body();
         model.addAttribute("renewals", renewals);
         return "officer/renewal.jsp";
     }
@@ -66,9 +66,9 @@ public class OfficerController {
         Officer officer = getOfficerFromSession();
         model.addAttribute("officer", officer);
         model.addAttribute("yourCase", officer.getRenewalIds().contains(renewalId));
-        Renewal renewal = restService.getRenewal(renewalId).execute().body();
-        License license = restService.getLicense(renewal.getLicense().getId()).execute().body();
-        Payment payment = restService.getPayment(renewal.getPayment().getId()).execute().body();
+        Renewal renewal = officerRestService.getRenewal(renewalId).execute().body();
+        License license = officerRestService.getLicense(renewal.getLicense().getId()).execute().body();
+        Payment payment = officerRestService.getPayment(renewal.getPayment().getId()).execute().body();
         renewal.setLicense(license);
         renewal.setPayment(payment);
         model.addAttribute("renewal", renewal);
@@ -106,7 +106,7 @@ public class OfficerController {
             License license = new License();
             license.setId(Integer.valueOf(lid));
             renewal.setLicense(license);
-            restService.createRenewal(renewal).execute();
+            officerRestService.createRenewal(renewal).execute();
         }
         return String.format("redirect:%s/officer/license", contextPath);
     }
@@ -114,9 +114,9 @@ public class OfficerController {
     @PostMapping("/renewal/take")
     public String officerRenewalTake(@RequestParam int renewalId) throws IOException {
         Officer officer = getOfficerFromSession();
-        Renewal renewal = restService.getRenewal(renewalId).execute().body();
+        Renewal renewal = officerRestService.getRenewal(renewalId).execute().body();
         renewal.setStatus(Status.REVIEWING);
-        restService.updateRenewal(renewalId, renewal).execute();
+        officerRestService.updateRenewal(renewalId, renewal).execute();
         jdbcTemplate.update("insert into review(officer_id, renewal_id) VALUES (?, ?)", officer.getId(), renewalId);
         return String.format("redirect:%s/officer/renewal/detail?renewalId=%d", contextPath, renewalId);
     }
@@ -124,12 +124,12 @@ public class OfficerController {
     @PostMapping("/renewal/accept")
     public String officerRenewalAccept(@RequestParam int renewalId, @RequestParam BigDecimal amount) throws IOException {
         Officer officer = getOfficerFromSession();
-        Renewal renewal = restService.getRenewal(renewalId).execute().body();
+        Renewal renewal = officerRestService.getRenewal(renewalId).execute().body();
         Payment payment = renewal.getPayment();
         payment.setAmount(amount);
-        restService.updatePayment(payment.getId(), payment).execute();
+        officerRestService.updatePayment(payment.getId(), payment).execute();
         renewal.setStatus(Status.APPROVED);
-        restService.updateRenewal(renewalId, renewal).execute();
+        officerRestService.updateRenewal(renewalId, renewal).execute();
         jdbcTemplate.update("update review set done = 1 where officer_id = ? and renewal_id = ? and done = 0", officer.getId(), renewalId);
         return String.format("redirect:%s/officer/renewal/detail?renewalId=%d", contextPath, renewalId);
     }
@@ -137,10 +137,10 @@ public class OfficerController {
     @PostMapping("/renewal/reject")
     public String officerRenewalReject(@RequestParam int renewalId, @RequestParam String reason) throws IOException {
         Officer officer = getOfficerFromSession();
-        Renewal renewal = restService.getRenewal(renewalId).execute().body();
+        Renewal renewal = officerRestService.getRenewal(renewalId).execute().body();
         renewal.setStatus(Status.REJECTED);
         renewal.setReason(reason);
-        restService.updateRenewal(renewalId, renewal).execute();
+        officerRestService.updateRenewal(renewalId, renewal).execute();
         jdbcTemplate.update("update review set done = 1 where officer_id = ? and renewal_id = ? and done = 0", officer.getId(), renewalId);
         return String.format("redirect:%s/officer/renewal/detail?renewalId=%d", contextPath, renewalId);
     }
