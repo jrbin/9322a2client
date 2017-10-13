@@ -3,3 +3,4 @@ client.iml
 target
 .DS_Store
 java-generated
+*.properties
