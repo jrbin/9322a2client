@@ -4,10 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import comp9322.assignment1.EmployeeValidationService;
 import comp9322.assignment1.EmployeeValidationServiceImplService;
 import comp9322.assignment1.ObjectFactory;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +24,7 @@ public class Config {
 
     public static final int DRIVER = 1;
     public static final int OFFICER = 2;
+    public static final int EMAIL = 3;
     private static final Logger logger = LoggerFactory.getLogger(Config.class);
 
     @Value("${comp9322.rest.baseUrl}")
@@ -44,6 +42,12 @@ public class Config {
     @Value("${comp9322.token.officer}")
     public String tokenOfficer;
 
+    @Value("${comp9322.mailgun.api.url}")
+    public String emailUrl;
+
+    @Value("${comp9322.mailgun.api.key}")
+    public String emailKey;
+
     private OkHttpClient okHttpClient(int serviceType) {
         return new OkHttpClient.Builder().addInterceptor(new Interceptor() {
             @Override
@@ -54,6 +58,8 @@ public class Config {
                     token = tokenDriver;
                 } else if (serviceType == OFFICER) {
                     token = tokenOfficer;
+                } else if (serviceType == EMAIL) {
+                    token = Credentials.basic("api", emailKey);
                 }
                 if (token != null) {
                     request = request.newBuilder().addHeader("Authorization", token).build();
@@ -72,10 +78,15 @@ public class Config {
     }
 
     private Retrofit retrofit(int serviceType) {
-        logger.debug("rest.baseUrl: {}", restBaseUrl);
+        String url;
+        if (serviceType == EMAIL) {
+            url = emailUrl;
+        } else {
+            url = restBaseUrl;
+        }
         return new Retrofit.Builder()
                 .addConverterFactory(JacksonConverterFactory.create())
-                .baseUrl(restBaseUrl)
+                .baseUrl(url)
                 .client(okHttpClient(serviceType))
                 .build();
     }
@@ -88,6 +99,11 @@ public class Config {
     @Bean
     public RestService driverRestService() {
         return retrofit(DRIVER).create(RestService.class);
+    }
+
+    @Bean
+    public EmailService emailService() {
+        return retrofit(EMAIL).create(EmailService.class);
     }
 
     @Bean

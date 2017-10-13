@@ -1,5 +1,6 @@
 package com.jrbin;
 
+import okhttp3.ResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +14,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.apache.commons.lang3.text.StrSubstitutor;
+import retrofit2.Response;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/officer")
@@ -38,6 +41,9 @@ public class OfficerController {
 
     @Autowired
     private HttpSession httpSession;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/login")
     public String officerLogin(Map<String, Object> model) {
@@ -103,10 +109,37 @@ public class OfficerController {
         }
         for (String lid : licenseId) {
             Renewal renewal = new Renewal();
-            License license = new License();
-            license.setId(Integer.valueOf(lid));
+            License license = officerRestService.getLicense(Integer.valueOf(lid)).execute().body();
             renewal.setLicense(license);
-            officerRestService.createRenewal(renewal).execute();
+            renewal = officerRestService.createRenewal(renewal).execute().body();
+
+            Map<String, String> data = new HashMap<>();
+            data.put("from", "No Reply <me@jrbin.com>");
+            data.put("to", license.getEmail());
+            data.put("subject", "Driver's License Renewal Notice");
+            InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("email.html");
+            Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
+            String html = scanner.hasNext() ? scanner.next() : "";
+            scanner.close();
+            String url = ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
+                    .path("/driver/process")
+                    .queryParam("renewalId", renewal.getId())
+                    .build()
+                    .toUriString();
+            Map<String, String> valuesMap = new HashMap<>();
+            valuesMap.put("licenseNumber", license.getLicenseNumber());
+            valuesMap.put("url", url);
+            StrSubstitutor sub = new StrSubstitutor(valuesMap);
+            html = sub.replace(html);
+            data.put("html", html);
+            Response<Map<String, Object>> response = emailService.sendMessage(data).execute();
+            ResponseBody errorBody = response.errorBody();
+            String errorString = "";
+            if (errorBody != null) {
+                errorString = errorBody.string();
+            }
+            logger.debug("renewal id {}, email successful {}, code {}, errorBody {}", response.isSuccessful(), response.code(), errorString);
         }
         return String.format("redirect:%s/officer/license", contextPath);
     }
