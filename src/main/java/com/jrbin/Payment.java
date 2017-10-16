@@ -10,7 +10,6 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Payment {
     private int id;
-    private String uri;
     private BigDecimal amount;
     @JsonFormat(pattern = "dd/MM/yyyy hh:mm:ss")
     private Date paidDate;
@@ -23,14 +22,6 @@ public class Payment {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
     }
 
     public BigDecimal getAmount() {

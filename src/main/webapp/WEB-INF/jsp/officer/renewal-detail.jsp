@@ -30,26 +30,26 @@
         <t:license-table license="${renewal.license}" />
       </div>
       <div id="license-new" class="client-detail-tab">
-        <h3 class="client-subheading">Review Reason</h3>
+        <h3 class="client-subheading">Updated Information</h3>
         <c:choose>
           <c:when test="${renewal.reviewCode == ReviewCode.EXTRA_EXTENSION}">
             <div class="alert alert-primary" role="alert">
-              Extra extension.
+              Extra extension. <c:if test="${renewal.status > Status.REVIEWING}">(Has already been reviewed by an officer.)</c:if>
             </div>
           </c:when>
           <c:when test="${renewal.reviewCode == ReviewCode.INVALID_EMAIL}">
             <div class="alert alert-warning" role="alert">
-              Driver's new email is invalid.
+              Driver's new email is invalid. <c:if test="${renewal.status > Status.REVIEWING}">(Has already been reviewed by an officer.)</c:if>
             </div>
           </c:when>
           <c:when test="${renewal.reviewCode == ReviewCode.INVALID_ADDRESS}">
             <div class="alert alert-warning" role="alert">
-              Driver's new address is invalid.
+              Driver's new address is invalid. <c:if test="${renewal.status > Status.REVIEWING}">(Has already been reviewed by an officer.)</c:if>
             </div>
           </c:when>
           <c:when test="${renewal.reviewCode == ReviewCode.INVALID_BOTH}">
             <div class="alert alert-warning" role="alert">
-              Both of driver's new email and new address are invalid.
+              Both of driver's new email and new address are invalid. <c:if test="${renewal.status > Status.REVIEWING}">(Has already been reviewed by an officer.)</c:if>
             </div>
           </c:when>
           <c:otherwise>
@@ -58,7 +58,7 @@
             </div>
           </c:otherwise>
         </c:choose>
-        <h5>Updated Information</h5>
+        <%--<h5>Updated Information</h5>--%>
         <div>
           <div class="client-detail-row">
             <div class="client-detail-label">New email</div>

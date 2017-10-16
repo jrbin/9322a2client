@@ -49,6 +49,9 @@ public class DriverController {
     @PostMapping("/welcome")
     public String driverWelcome(@RequestParam int renewalId) throws IOException {
         Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
+        if (renewal.getStatus() != Status.NEW) {
+            throw new UnauthorizedException("You are not in a valid state");
+        }
         renewal.setStatus(Status.CONFIRMING);
         driverRestService.updateRenewal(renewalId, renewal).execute();
         return String.format("redirect:/driver/process?renewalId=%d", renewalId);
@@ -57,6 +60,9 @@ public class DriverController {
     @PostMapping("/confirm")
     public String driverConfirm(@RequestParam int renewalId, @RequestParam int action) throws IOException {
         Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
+        if (renewal.getStatus() != Status.CONFIRMING) {
+            throw new UnauthorizedException("You are not in a valid state");
+        }
         if (action == 0) {
             renewal.setStatus(Status.UPDATING);
         } else {
@@ -76,6 +82,9 @@ public class DriverController {
             @RequestParam String email, @RequestParam String preStreet, @RequestParam String streetName,
             @RequestParam String streetType, @RequestParam String suburb, @RequestParam String state) throws IOException {
         Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
+        if (renewal.getStatus() != Status.UPDATING) {
+            throw new UnauthorizedException("You are not in a valid state");
+        }
         if (action == 0) {
             renewal.setStatus(Status.CONFIRMING);
         } else {
@@ -131,6 +140,9 @@ public class DriverController {
     @PostMapping("/extension")
     public String driverExtension(@RequestParam int renewalId, @RequestParam int action) throws IOException {
         Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
+        if (renewal.getStatus() != Status.CONFIRMED) {
+            throw new UnauthorizedException("You are not in a valid state");
+        }
         if (action == 0) {
             renewal.setStatus(Status.APPROVED);
             renewal.setReviewCode(ReviewCode.DEFAULT);
@@ -147,6 +159,9 @@ public class DriverController {
     @PostMapping("/back")
     public String driverExtension(@RequestParam int renewalId) throws IOException {
         Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
+        if (renewal.getStatus() != Status.CONFIRMED) {
+            throw new UnauthorizedException("You are not in a valid state");
+        }
         renewal.setStatus(Status.CONFIRMING);
         driverRestService.updateRenewal(renewalId, renewal).execute();
         return String.format("redirect:/driver/process?renewalId=%d", renewalId);
@@ -155,6 +170,9 @@ public class DriverController {
     @PostMapping("/pay")
     public String driverPay(@RequestParam int renewalId) throws IOException {
         Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
+        if (renewal.getStatus() != Status.APPROVED) {
+            throw new UnauthorizedException("You are not in a valid state");
+        }
         Payment payment = renewal.getPayment();
         payment.setPaidDate(new Date());
         driverRestService.updatePayment(payment.getId(), payment).execute();
@@ -177,6 +195,9 @@ public class DriverController {
     @PostMapping("/archive")
     public String driverArchive(@RequestParam int renewalId) throws IOException {
         Renewal renewal = driverRestService.getRenewal(renewalId).execute().body();
+        if (renewal.getStatus() != Status.SUCCESSFUL) {
+            throw new UnauthorizedException("You are not in a valid state");
+        }
         renewal.setStatus(Status.ARCHIVED);
         driverRestService.updateRenewal(renewalId, renewal).execute();
         return String.format("redirect:/driver/process?renewalId=%d", renewalId);

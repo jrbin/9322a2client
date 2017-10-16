@@ -110,7 +110,17 @@ public class OfficerController {
         for (String lid : licenseId) {
             Renewal renewal = new Renewal();
             License license = officerRestService.getLicense(Integer.valueOf(lid)).execute().body();
+            Payment payment = new Payment();
+            payment.setAmount(BigDecimal.valueOf(50));
             renewal.setLicense(license);
+            renewal.setPayment(payment);
+            renewal.setEmail(license.getEmail());
+            renewal.setAddress(license.getAddress());
+            renewal.setStatus(Status.NEW);
+            renewal.setReviewCode(ReviewCode.DEFAULT);
+            Date now = new Date();
+            renewal.setIssueDate(now);
+            renewal.setLastModified(now);
             renewal = officerRestService.createRenewal(renewal).execute().body();
 
             Map<String, String> data = new HashMap<>();

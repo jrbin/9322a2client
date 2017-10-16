@@ -62,7 +62,9 @@ public class Config {
                     token = Credentials.basic("api", emailKey);
                 }
                 if (token != null) {
-                    request = request.newBuilder().addHeader("Authorization", token).build();
+                    request = request.newBuilder()
+                            .addHeader("Accept", "application/json")
+                            .addHeader("Authorization", token).build();
                 }
 //                long t1 = System.nanoTime();
 //                httpLogger.info(String.format("Sending request %s on %s%n%s",

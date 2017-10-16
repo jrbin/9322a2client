@@ -9,7 +9,6 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Renewal {
     private int id;
-    private String uri;
     private String email;
     private String address;
     private int status;
@@ -29,14 +28,6 @@ public class Renewal {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
     }
 
     public String getEmail() {
