@@ -29,6 +29,7 @@
             <th>Issue Date</th>
             <th>License Number</th>
             <th>Class</th>
+            <th>Driver name</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -41,6 +42,7 @@
               <td><time><fmt:formatDate type="date" value="${renewal.issueDate}" /></time></td>
               <td>${renewal.license.licenseNumber}</td>
               <td>${renewal.license.licenseClass}</td>
+              <td>${renewal.license.driverName}</td>
               <td class="client-td-action">
                 <a class="btn btn-sm btn-outline-secondary" href="${officerUrl}renewal/detail?renewalId=${renewal.id}">View details</a>
                 <c:if test="${renewal.status == Status.PENDING}">
